@@ -12,15 +12,15 @@ const App = () => {
     return (
         <Router>
             <Switch>
+                <Route path="/country/:countryCode">
+                    <CountryDetail serviceEndpointBase={serviceEndpointBase}/>
+                </Route>
                 <Route path="/" >
                     <Home serviceEndpointBase={serviceEndpointBase}  loading={isLoading} />
                 </Route>
-                <Route path="/country/:code">
-                    <CountryDetail serviceEndpointBase={serviceEndpointBase}/>
-                </Route>
             </Switch> 
         </Router>
-    )
+     )
 }
 
 export default App

@@ -23,13 +23,15 @@ const GridLayout = ({ cols, rows, columnNames, countries }) => {
             {   countries &&
                 countries.map((country) => {
                 return (
-                    <GridRow key={country.code}>
-                        {Object.entries(country).map((entry) => {
-                           if (neededKeys.includes(entry[0])) {
-                               return <p key={`${country.code}_${entry[0]}`}>{entry[1]}</p>
-                           }
-                        })}
-                    </GridRow>
+                    <a href={`/country/${country.code}`}>
+                        <GridRow key={country.code}>
+                            {Object.entries(country).map((entry) => {
+                               if (neededKeys.includes(entry[0])) {
+                                   return <p key={`${country.code}_${entry[0]}`}>{entry[1]}</p>
+                               }
+                            })}
+                        </GridRow>
+                    </a>
                 )
             })}
         </GridContainer>

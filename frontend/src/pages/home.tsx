@@ -3,9 +3,9 @@ import Select from 'react-select'
 import { useStateWithPromise } from '../hooks/useStateWithPromise'
 import { ICountry, ICountryReturnData } from 'src/state/ICountry'
 
-
 import BaseLayout from '../components/BaseLayout'
 import GridLayout from '../components/GridLayout'
+import { RegionSelectPanel, RegionSelectBlock } from '../components/styled/RegionSelectPanel'
 
 const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
 
@@ -110,12 +110,16 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
                 <input type="text" placeholder="Search By Name" />
                 <button>Search</button>    
             </div>
-                <div>
+                <RegionSelectPanel>
+                    <RegionSelectBlock>
                     <h3>Continent</h3>
                     <Select options={continents} value={continents.filter(option => option.label === 'NONE')}/>
-                    <h3>Region</h3>
-                    <Select options={regions} value={regions.filter(option => option.label === 'NONE')}/>
-            </div>
+                    </RegionSelectBlock>
+                    <RegionSelectBlock>
+                        <h3>Region</h3>
+                        <Select options={regions} value={regions.filter(option => option.label === 'NONE')}/>
+                    </RegionSelectBlock>
+                </RegionSelectPanel>
             <div>
                 <GridLayout cols="5" rows="10" columnNames={columnsNames} countries={countries}/>
             </div>  
