@@ -15,6 +15,7 @@ module.exports = {
 
   devServer: {
     contentBase: path.join(__dirname, "dist"),
+    historyApiFallback: true,
     compress: true,
     port: 7777,
   },
@@ -55,4 +56,8 @@ module.exports = {
   performance: { hints: false },
   watch: true,
   devtool: "source-map",
+  output: {
+    publicPath: '/',
+  }
+  
 };
