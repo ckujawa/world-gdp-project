@@ -59,9 +59,14 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
         const [selectedRegion, setSelectedRegion] = useState("")
         const [currentPage, setCurrentPage] = useState(1)
 
-        const populateContinents = async (serviceEndpointBase: string): Promise<void> => {
+        const populateContinents = async (region: string): Promise<void> => {
             try {
-                const response = await fetch(`${serviceEndpointBase}/lookup/continents`)
+                let endpoint = `${serviceEndpointBase}/lookup/continents`
+                if (region && region !== "NONE") {
+                    endpoint += `?region=${region}`
+                }
+
+                const response = await fetch(endpoint)
                 const continents: [string] = await response.json()
                 const options = continents.map((cont) => { return { label: cont, value: cont } })
                 options.unshift({ label: 'NONE', value: 'NONE' })
@@ -133,7 +138,8 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
         }, [selectedContinentValue])
 
         useEffect(() => {
-            populateCountries(serviceEndpointBase, 1, null,selectedRegion)
+            populateCountries(serviceEndpointBase, 1, null, selectedRegion)
+            populateContinents(selectedRegion)
         }, [selectedRegion])
         
         return (
