@@ -5,6 +5,7 @@ import { ICountry, ICountryReturnData } from 'src/state/ICountry'
 
 import BaseLayout from '../components/BaseLayout'
 import GridLayout from '../components/GridLayout'
+import Pager from '../components/Pager'
 import { RegionSelectPanel, RegionSelectBlock } from '../components/styled/RegionSelectPanel'
 
 const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
@@ -50,6 +51,7 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
     
     const Home = (props) => {
         
+        const pageSize: number = 10;
         const { loading, setLoading, serviceEndpointBase } = props
         const [countries, setCountries] = useStateWithPromise([])
         const [countryCount, setCountryCount] = useStateWithPromise(0)
@@ -141,6 +143,10 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
             populateCountries(serviceEndpointBase, 1, null, selectedRegion)
             populateContinents(selectedRegion)
         }, [selectedRegion])
+
+        useEffect(() => {
+            populateCountries(serviceEndpointBase, currentPage)
+        }, [currentPage])
         
         return (
         <BaseLayout>
@@ -162,7 +168,8 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
                 </RegionSelectPanel>
             <div>
                 <GridLayout cols="5" rows="10" columnNames={columnsNames} countries={countries}/>
-            </div>  
+                </div>  
+            <Pager pageSize={pageSize} countryCount={countryCount} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
         </BaseLayout>
         )
 }
