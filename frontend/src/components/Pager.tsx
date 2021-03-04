@@ -16,12 +16,17 @@ const PageBlock = styled.div`
     align-items: center;
     justify-content: center;
     gap: 3px;
-    transition: all .5s ease-in-out;
+    transition: all .5s ease-in-out, cursor: 1ms;
+
+    &.clickable {
+        cursor: pointer;
+    }
 
     &.current {
         transform: scale(1.2);
         border-color: #69969C;
-        border-width: 2px;
+        border-width: 5px;
+        border-style: inset;
     }
 `
 const Pager = (props) => {
@@ -32,8 +37,8 @@ const Pager = (props) => {
     const totalPages = Math.ceil(countryCount / pageSize);
     const prevPage = currentPage - 1 === 0 ? 1 : currentPage - 1;
     const nextPage = currentPage + 1 > totalPages ? totalPages : currentPage + 1; 
-    const hasPrevPage = prevPage !== 1;
-    const hasNextPage = nextPage <= totalPages;
+    const hasPrevPage = currentPage > 1;
+    const hasNextPage = currentPage < totalPages;
 
     function setPageNumber(newPage: number) {
         setCurrentPage(newPage);
@@ -42,17 +47,20 @@ const Pager = (props) => {
     console.log(totalPages);
     return (
         <PageWrapper>
-            { currentPage > 1 && <PageBlock onClick={() => setPageNumber(1)}>&lt;&lt;</PageBlock>}
-            { hasPrevPage && <PageBlock onClick={() => setPageNumber(currentPage - 1)}>&lt;</PageBlock>}
+            <PageBlock onClick={currentPage > 1 ? () => setPageNumber(1) : undefined} className={currentPage > 1 ? 'clickable' : ''}>&lt;&lt;</PageBlock>
+            <PageBlock onClick={ hasPrevPage ? () => setPageNumber(currentPage - 1) : undefined} className={hasPrevPage ? 'clickable' : ''}>&lt;</PageBlock>
             {
                 Array.from({ length: totalPages }).map((_, i) => (
                     
-                    <PageBlock key={`page${i}`} className = {i == currentPage -1 && "current"}onClick={() => setPageNumber(i+1)}>{i + 1}</PageBlock>
+                    <PageBlock key={`page${i}`}
+                        className={i == currentPage - 1 ? 'current' : 'clickable'}
+                        onClick={() => setPageNumber(i + 1)}>{i + 1}</PageBlock>
                 ))
             
             }
-            { hasNextPage && <PageBlock onClick={()=> setPageNumber(currentPage + 1)}>&gt;</PageBlock>}
-            { currentPage < totalPages && <PageBlock onClick={() => setPageNumber(totalPages)}>&gt;&gt;</PageBlock>}
+            <PageBlock onClick={hasNextPage ? ()=> setPageNumber(currentPage + 1) : undefined} className={hasNextPage ? 'clickable' : ''}>&gt;</PageBlock>
+            <PageBlock onClick={currentPage < totalPages ? () => setPageNumber(totalPages) : undefined}
+                className={currentPage < totalPages ? 'clickable' : ''}>&gt;&gt;</PageBlock>
         </PageWrapper>
     )
 }
