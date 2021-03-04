@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import Select from 'react-select'
 import { useStateWithPromise } from '../hooks/useStateWithPromise'
 import { ICountry, ICountryReturnData } from 'src/state/ICountry'
+import {useHistory} from 'react-router-dom'
 
 import BaseLayout from '../components/BaseLayout'
 import GridLayout from '../components/GridLayout'
@@ -60,6 +61,8 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
         const [selectedContinentValue, setSelectedContinentValue] = useState("NONE")
         const [selectedRegion, setSelectedRegion] = useState("")
         const [currentPage, setCurrentPage] = useState(1)
+        const [searchVal, setSearchVal] = useState('')
+        const history = useHistory();
 
         const populateContinents = async (region: string): Promise<void> => {
             try {
@@ -84,7 +87,6 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
                 if (continent && continent !== "NONE") {
                     endpoint += `?continent=${continent}`
                 }
-                console.log(encodeURI(endpoint))
                 const response = await fetch(encodeURI(endpoint))
                 const reg: [string] = await response.json()
 
@@ -110,7 +112,7 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
                     serviceEndpoint = `${serviceEndpoint}&region=${region}`
                 }
                 const response = await fetch(encodeURI(serviceEndpoint))
-                const countries: ICountryReturnData = await response.json();
+                const countries: ICountryReturnData = await response.json()
                 setCountryCount(countries.count)
                 setCountries(countries.list)
             } catch (err) {
@@ -126,6 +128,18 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
             await setSelectedRegion(event.value)
         }
 
+        const doSearch = async (event): Promise<void> => {
+            let serviceEndpoint: string = `${serviceEndpointBase}/countries?&search=${searchVal}`
+            try {
+                const response = await fetch(encodeURI(serviceEndpoint))
+                const found: ICountryReturnData = await response.json()
+                history.push(`/country/${found.list[0].code}`)
+            } catch (err) {
+                console.error(`An error occurred when retrieving information for ${searchVal}: ${err}`)
+            }
+        }
+
+        //use this to populate countries, regions, and continents on render
         useEffect(() => {
             setLoading(true)
             populateContinents(serviceEndpointBase)
@@ -134,16 +148,19 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
             setLoading(false)
         }, [])
 
+        //populates countries and regions when a continent value has been selected
         useEffect(() => {
             populateCountries(serviceEndpointBase, 1, selectedContinentValue);
             populateRegions(selectedContinentValue);
         }, [selectedContinentValue])
 
+        //populates countries and continents when a region is selected.
         useEffect(() => {
             populateCountries(serviceEndpointBase, 1, null, selectedRegion)
             populateContinents(selectedRegion)
         }, [selectedRegion])
 
+        //populates the specified page of countries when the current page is changed
         useEffect(() => {
             populateCountries(serviceEndpointBase, currentPage)
         }, [currentPage])
@@ -153,8 +170,8 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
             <h2>Countries</h2>
             <br />
             <div>
-                <input type="text" placeholder="Search By Name" />
-                <button>Search</button>    
+                    <input type="text" placeholder="Search By Name" value={searchVal} onChange={(event) => setSearchVal(event.target.value)}/>
+                <button onClick={doSearch}>Search</button>    
             </div>
                 <RegionSelectPanel>
                     <RegionSelectBlock>
