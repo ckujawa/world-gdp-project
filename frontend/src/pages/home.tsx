@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import Select from 'react-select'
 import { useStateWithPromise } from '../hooks/useStateWithPromise'
-import { ICountry, ICountryReturnData } from 'src/state/ICountry'
+import { ICountryReturnData } from 'src/state/ICountry'
 import {useHistory} from 'react-router-dom'
 
 import BaseLayout from '../components/BaseLayout'
