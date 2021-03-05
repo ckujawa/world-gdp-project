@@ -104,6 +104,17 @@ public class CountryAPIController {
 		}
 	}
 	
+	@GetMapping("/{countryCode}")
+	public ResponseEntity<?> getCountryData(@PathVariable String countryCode){
+		try {
+			Country country = countryDao.getCountryDetail(countryCode);
+			return ResponseEntity.ok(country);
+		} catch (Exception e) {
+			log.error("An error occurred when getting data for country with code " + countryCode);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("We were unable to retrieve the data for country with code " + countryCode);
+		}
+	}
+	
 	@GetMapping("/{countryCode}/gdp")
 	public ResponseEntity<?> getGDP(@PathVariable String countryCode){
 		try {
