@@ -1,12 +1,15 @@
 package com.ckujawa.worldgdp.controller.api;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ckujawa.worldgdp.dao.LookupDAO;
@@ -21,9 +24,13 @@ public class LookupApiController {
 	@Autowired private LookupDAO dao;
 	
 	@GetMapping(value="/continents")
-	public ResponseEntity<?> getContinents(){
+	public ResponseEntity<?> getContinents(
+		    @RequestParam(name="region", required = false) String region
+		    ){
+		Map<String, Object> params = new HashMap<>();
+		params.put("region", region);
 		try {
-			List<String> continents = dao.getContinents();
+			List<String> continents = dao.getContinents(params);
 			return ResponseEntity.ok(continents);
 		} catch (Exception e) {
 			log.error("An error occurred when retrieving the list of continents.", e);
@@ -32,10 +39,16 @@ public class LookupApiController {
 		
 	}
 	
+	
+	
 	@GetMapping(value="/regions")
-	public ResponseEntity<?> getRegions(){
+	public ResponseEntity<?> getRegions(
+			@RequestParam(name="continent", required = false) String continent
+			){
+			Map<String, Object> params = new HashMap<>();
+			params.put("continent", continent);
 		try {
-			List<String> regions = dao.getRegions();
+			List<String> regions = dao.getRegions(params);
 			return ResponseEntity.ok(regions);
 		} catch(Exception e) {
 			log.error("An error occurred when retrieving regions.", e);

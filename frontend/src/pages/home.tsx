@@ -50,34 +50,44 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
     
     const Home = (props) => {
         
-        const { isLoading, setLoading, serviceEndpointBase } = props
+        const { loading, setLoading, serviceEndpointBase } = props
         const [countries, setCountries] = useStateWithPromise([])
         const [countryCount, setCountryCount] = useStateWithPromise(0)
         const [continents, setContinents] = useStateWithPromise([])
         const [regions, setRegions] = useStateWithPromise([])
-        const [selectedContinent, setSelectedContinent] = useState("")
+        const [selectedContinentValue, setSelectedContinentValue] = useState("NONE")
         const [selectedRegion, setSelectedRegion] = useState("")
         const [currentPage, setCurrentPage] = useState(1)
 
-        const populateContinents = async (serviceEndpointBase: string): Promise<void> => {
+        const populateContinents = async (region: string): Promise<void> => {
             try {
-                const response = await fetch(`${serviceEndpointBase}/lookup/continents`)
+                let endpoint = `${serviceEndpointBase}/lookup/continents`
+                if (region && region !== "NONE") {
+                    endpoint += `?region=${region}`
+                }
+
+                const response = await fetch(endpoint)
                 const continents: [string] = await response.json()
                 const options = continents.map((cont) => { return { label: cont, value: cont } })
-                options.unshift({ label: 'NONE', value: '' })
+                options.unshift({ label: 'NONE', value: 'NONE' })
                 setContinents(options)
             } catch (err) {
                 //log that...
             }
         }
 
-        const populateRegions = async (serviceEndpointBase: string): Promise<void> => {
+        const populateRegions = async (continent?: string): Promise<void> => {
             try {
-                const response = await fetch(`${serviceEndpointBase}/lookup/regions`)
+                let endpoint = `${serviceEndpointBase}/lookup/regions`
+                if (continent && continent !== "NONE") {
+                    endpoint += `?continent=${continent}`
+                }
+                console.log(encodeURI(endpoint))
+                const response = await fetch(encodeURI(endpoint))
                 const reg: [string] = await response.json()
 
                 const options = reg.map((dat) => { return { label: dat, value: dat } })
-                options.unshift({ label: 'NONE', value: '' })
+                options.unshift({ label: 'NONE', value: 'NONE' })
                 
                 setRegions(options)
             } catch (err) {
@@ -85,9 +95,19 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
             }
         }
         
-        const populateCountries = async (serviceEndpointBase: string, pageNo: number = 1): Promise<void> => {
+        const populateCountries = async (endpointBase: string = serviceEndpointBase,
+            pageNo: number = 1,
+            continent?: string,
+            region?: string): Promise<void> => {
             try {
-                const response = await fetch(`${serviceEndpointBase}/countries?pageNo=${pageNo}`)
+                let serviceEndpoint: string = `${endpointBase}/countries?&pageNo=${pageNo}`
+                if (continent && continent !== "NONE") {
+                    serviceEndpoint = `${serviceEndpoint}&continent=${continent}`
+                }
+                if (region && region !== "NONE") {
+                    serviceEndpoint = `${serviceEndpoint}&region=${region}`
+                }
+                const response = await fetch(encodeURI(serviceEndpoint))
                 const countries: ICountryReturnData = await response.json();
                 setCountryCount(countries.count)
                 setCountries(countries.list)
@@ -96,11 +116,31 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
             }
         }
 
+        const continentChanged = async (event): Promise<void> => {
+            await setSelectedContinentValue(event.value);
+        }
+
+        const regionChanged = async (event): Promise<void> => {
+            await setSelectedRegion(event.value)
+        }
+
         useEffect(() => {
+            setLoading(true)
             populateContinents(serviceEndpointBase)
             populateRegions(serviceEndpointBase)
             populateCountries(serviceEndpointBase)
+            setLoading(false)
         }, [])
+
+        useEffect(() => {
+            populateCountries(serviceEndpointBase, 1, selectedContinentValue);
+            populateRegions(selectedContinentValue);
+        }, [selectedContinentValue])
+
+        useEffect(() => {
+            populateCountries(serviceEndpointBase, 1, null, selectedRegion)
+            populateContinents(selectedRegion)
+        }, [selectedRegion])
         
         return (
         <BaseLayout>
@@ -113,18 +153,18 @@ const columnsNames = ["Code", "Name", "Continent", "Region", "Area"]
                 <RegionSelectPanel>
                     <RegionSelectBlock>
                     <h3>Continent</h3>
-                    <Select options={continents} value={continents.filter(option => option.label === 'NONE')}/>
+                    <Select options={continents} onChange={continentChanged} value={continents.filter(option => option.label === selectedContinentValue)}/>
                     </RegionSelectBlock>
                     <RegionSelectBlock>
                         <h3>Region</h3>
-                        <Select options={regions} value={regions.filter(option => option.label === 'NONE')}/>
+                        <Select options={regions} onChange={regionChanged} value={regions.filter(option => option.label === 'NONE')}/>
                     </RegionSelectBlock>
                 </RegionSelectPanel>
             <div>
                 <GridLayout cols="5" rows="10" columnNames={columnsNames} countries={countries}/>
             </div>  
         </BaseLayout>
-    )
+        )
 }
 
 

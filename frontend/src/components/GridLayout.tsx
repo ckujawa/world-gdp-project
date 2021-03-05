@@ -1,7 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 
 const GridContainer = styled.div`
+    margin-top: 2rem;
+    margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
 `
@@ -23,7 +26,7 @@ const GridLayout = ({ cols, rows, columnNames, countries }) => {
             {   countries &&
                 countries.map((country) => {
                 return (
-                    <a href={`/country/${country.code}`}>
+                    <Link to={`/country/${country.code}`} key={`${country.code}_lnk`}>
                         <GridRow key={country.code}>
                             {Object.entries(country).map((entry) => {
                                if (neededKeys.includes(entry[0])) {
@@ -31,7 +34,7 @@ const GridLayout = ({ cols, rows, columnNames, countries }) => {
                                }
                             })}
                         </GridRow>
-                    </a>
+                    </Link>
                 )
             })}
         </GridContainer>

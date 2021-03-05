@@ -1,8 +1,9 @@
 package com.ckujawa.worldgdp.test.config.controller.api;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,6 +48,17 @@ public class LookupAPIControllerTest {
 	}
 	
 	@Test
+	public void testGetContinentsByRegion() throws Exception{
+		this.mockMvc.perform(get("/api/lookup/continents?region=Caribbean")
+		.accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json;charset=UTF-8"))
+		.andExpect(jsonPath("$").isArray())
+		.andExpect(jsonPath("$.length()", is(1)))
+		.andExpect(jsonPath("$[0]", is("North America")));
+	}
+	
+	@Test
 	public void testGetRegions() throws Exception{
 		this.mockMvc.perform(get("/api/lookup/regions")
 		.accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
@@ -55,6 +67,21 @@ public class LookupAPIControllerTest {
 		.andExpect(jsonPath("$").isArray())
 		.andExpect(jsonPath("$.length()", is(25)))
 		.andExpect(jsonPath("$[0]", is ("Antarctica")));
+	}
+	
+	@Test
+	public void testGetRegionsByContinent() throws Exception{
+		this.mockMvc.perform(get("/api/lookup/regions?continent=Africa")
+		.accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
+		.andExpect(status().isOk())
+		.andExpect(content().contentType("application/json;charset=UTF-8"))
+		.andExpect(jsonPath("$").isArray())
+		.andExpect(jsonPath("$.length()", is(5)))
+		.andExpect(jsonPath("$", hasItem("Central Africa")))
+		.andExpect(jsonPath("$", hasItem("Northern Africa")))
+		.andExpect(jsonPath("$", hasItem("Southern Africa")))
+		.andExpect(jsonPath("$", hasItem("Eastern Africa")))
+		.andExpect(jsonPath("$", hasItem("Western Africa")));
 	}
 	
 	@Test

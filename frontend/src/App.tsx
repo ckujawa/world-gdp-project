@@ -16,7 +16,7 @@ const App = () => {
                     <CountryDetail serviceEndpointBase={serviceEndpointBase}/>
                 </Route>
                 <Route path="/" >
-                    <Home serviceEndpointBase={serviceEndpointBase}  loading={isLoading} />
+                    <Home serviceEndpointBase={serviceEndpointBase}  loading={isLoading} setLoading={setLoading} />
                 </Route>
             </Switch> 
         </Router>
