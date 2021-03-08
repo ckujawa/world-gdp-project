@@ -5,7 +5,7 @@ import ReactCountryFlag from 'react-country-flag'
 import { useStateWithPromise } from '../hooks/useStateWithPromise'
 import BaseLayout from '../components/BaseLayout'
 import { ICountry } from '../state/ICountry'
-import { BottomBorderPanel } from '../components/styled/DisplayStyles'
+import { BottomBorderPanel, FlexBottomBorderPanel, DetailPanel, DetailLabel } from '../components/styled/DisplayStyles'
 
 const CountryDetail = (props) => {
     const { countryCode } = useParams();
@@ -48,31 +48,31 @@ const CountryDetail = (props) => {
     }, [])
 
     return (<BaseLayout>
-        <BottomBorderPanel>
-            <h3>Country</h3>
-            <p>{country.name} ({country.code})</p>
+        <BottomBorderPanel style={{textAlign: 'center'}}>
+            <h2>Country: <span style={{color: 'blue'}}>{country.name} ({country.code})</span></h2>
         </BottomBorderPanel>
-        <BottomBorderPanel style={{display: 'flex'}}>
+        <FlexBottomBorderPanel>
             <ReactCountryFlag countryCode={country.code2} svg
                 style={{
                     width: '40%',
                     height: 'auto',
-                    marginLeft: '2rem',
-                    marginRight: '2rem'
+                    margin: '2rem'
                 }}
             />
-            <div>
-                <p>Capital: {country.capital.name}</p>
-                <p>Continent: {country.continent}</p>
-                <p>Region: {country.region}</p>
-                <p>Head of State: {country.headOfState}</p>
-                <p>Government: {country.government}</p>
-                <p>Local Name: {country.localName}</p>
-                <p>Surface Area: {country.surfaceArea}</p>
-                <p>Population: {country.population}</p>
-                <p>Life Expectancy: {country.lifeExpectancy}</p>
-            </div>
-        </BottomBorderPanel>
+            <DetailPanel>
+                <p><DetailLabel>Capital:</DetailLabel> {country.capital.name}</p>
+                <p><DetailLabel>Continent:</DetailLabel> {country.continent}</p>
+                <p><DetailLabel>Region:</DetailLabel> {country.region}</p>
+                <p><DetailLabel>Head of State:</DetailLabel> {country.headOfState}</p>
+                <p><DetailLabel>Government:</DetailLabel> {country.government}</p>
+            </DetailPanel>
+            <DetailPanel>
+                <p><DetailLabel>Local Name:</DetailLabel> {country.localName}</p>
+                <p><DetailLabel>Surface Area:</DetailLabel> {country.surfaceArea}</p>
+                <p><DetailLabel>Population:</DetailLabel> {country.population}</p>
+                <p><DetailLabel>Life Expectancy:</DetailLabel> {country.lifeExpectancy}</p>
+            </DetailPanel>
+        </FlexBottomBorderPanel>
     </BaseLayout>)
 }
 
