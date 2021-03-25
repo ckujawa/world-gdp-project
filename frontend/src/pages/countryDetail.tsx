@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import { useParams } from 'react-router-dom'
 import ReactCountryFlag from 'react-country-flag'
 
@@ -6,6 +6,7 @@ import { useStateWithPromise } from '../hooks/useStateWithPromise'
 import BaseLayout from '../components/BaseLayout'
 import { ICountry } from '../state/ICountry'
 import { BottomBorderPanel, FlexBottomBorderPanel, DetailPanel, DetailLabel } from '../components/styled/DisplayStyles'
+import {ICity} from "../state/ICity";
 
 const CountryDetail = (props) => {
     const { countryCode } = useParams();
@@ -33,17 +34,36 @@ const CountryDetail = (props) => {
             },
             code2: ''
     })
+    const [cities, setCities] = useStateWithPromise([])
+    const [languages, setLanguages] = useStateWithPromise([])
 
     const populateCountryData = async () : Promise<void> => {
         const endpt = `${serviceEndpointBase}/countries/${countryCode}`
-        console.log(endpt)
         const resp = await fetch(endpt)
-        console.log(resp)
         const c: ICountry = await resp.json()
-        setCountry(previous => ({...previous, ...c}))
+        await setCountry(previous => ({...previous, ...c}))
+    }
+
+    const populateCities = async() : Promise<void> => {
+        const endpt = `${serviceEndpointBase}/cities/${countryCode}`
+        const resp = await fetch(endpt)
+        const c : [ICity] = await resp.json()
+        await setCities(c)
+    }
+
+    const populateLanguages = async() : Promise<void> => {
+        const endpt = `${serviceEndpointBase}/languages/${countryCode}`
+        try{
+            const resp = await fetch(endpt)
+            const lang = await resp.json()
+            await setLanguages(lang)
+        } catch (e) {
+            console.error(`something went wrong when retrieving languages for ${countryCode}`)
+        }
     }
 
     useEffect(() => {
+        populateCities()
         populateCountryData()
     }, [])
 
@@ -73,6 +93,10 @@ const CountryDetail = (props) => {
                 <p><DetailLabel>Life Expectancy:</DetailLabel> {country.lifeExpectancy}</p>
             </DetailPanel>
         </FlexBottomBorderPanel>
+        <ul>
+            {cities.map(city => <li key={city.id}>{city.name}</li>)}
+        </ul>
+
     </BaseLayout>)
 }
 
