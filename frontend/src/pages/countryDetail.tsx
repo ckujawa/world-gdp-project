@@ -63,7 +63,11 @@ const CountryDetail = (props) => {
     }
 
     useEffect(() => {
+        // noinspection JSIgnoredPromiseFromCall
+        populateLanguages()
+        // noinspection JSIgnoredPromiseFromCall
         populateCities()
+        // noinspection JSIgnoredPromiseFromCall
         populateCountryData()
     }, [])
 
@@ -95,6 +99,10 @@ const CountryDetail = (props) => {
         </FlexBottomBorderPanel>
         <ul>
             {cities.map(city => <li key={city.id}>{city.name}</li>)}
+        </ul>
+
+        <ul>
+            {languages.map((language, idx) => <li key={idx}>{language.language}</li>)}
         </ul>
 
     </BaseLayout>)
