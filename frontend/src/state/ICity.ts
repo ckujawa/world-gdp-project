@@ -5,6 +5,6 @@ export interface ICity{
     name: string,
     countryCode: string,
     country: ICountry | null,
-    distrinct: string,
+    district: string,
     population: number
 }
