@@ -1,10 +1,11 @@
 import React from 'react'
 import {ICity} from "../state/ICity";
+import {DetailSummary} from "./styled/DetailSummary";
 
 
 const CityDetails = ({cities}) => {
     return ( cities.map((city) =>
-        <details>
+        <DetailSummary>
             <summary>{city.name}</summary>
             <p>
                 <ul>
@@ -12,7 +13,7 @@ const CityDetails = ({cities}) => {
                     <li>Population: {city.population}</li>
                 </ul>
             </p>
-        </details>
+        </DetailSummary>
     ))
 }
 
