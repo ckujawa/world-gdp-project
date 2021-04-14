@@ -4,9 +4,12 @@ import ReactCountryFlag from 'react-country-flag'
 
 import { useStateWithPromise } from '../hooks/useStateWithPromise'
 import BaseLayout from '../components/BaseLayout'
+import DetailListPanel from "../components/DetailListPanel";
 import { ICountry } from '../state/ICountry'
 import { BottomBorderPanel, FlexBottomBorderPanel, DetailPanel, DetailLabel } from '../components/styled/DisplayStyles'
 import {ICity} from "../state/ICity";
+import CityDetails from "../components/CityDetails";
+import LanguageDetails from "../components/LanguageDetails";
 
 const CountryDetail = (props) => {
     const { countryCode } = useParams();
@@ -97,13 +100,15 @@ const CountryDetail = (props) => {
                 <p><DetailLabel>Life Expectancy:</DetailLabel> {country.lifeExpectancy}</p>
             </DetailPanel>
         </FlexBottomBorderPanel>
-        <ul>
-            {cities.map(city => <li key={city.id}>{city.name}</li>)}
-        </ul>
+        <FlexBottomBorderPanel>
+            <DetailListPanel title={'Cities'}>
+                <CityDetails cities={cities}/>
+            </DetailListPanel>
 
-        <ul>
-            {languages.map((language, idx) => <li key={idx}>{language.language}</li>)}
-        </ul>
+            <DetailListPanel title={'Languages'}>
+                <LanguageDetails languages={languages}/>
+            </DetailListPanel>
+        </FlexBottomBorderPanel>
 
     </BaseLayout>)
 }

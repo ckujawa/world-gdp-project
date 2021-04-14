@@ -54,7 +54,6 @@ module.exports = {
   ],
 
   performance: { hints: false },
-  watch: true,
   devtool: "source-map",
   output: {
     publicPath: '/',
