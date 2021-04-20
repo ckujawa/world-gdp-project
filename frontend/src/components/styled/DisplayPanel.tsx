@@ -7,7 +7,8 @@ export const DisplayPanel = styled.div<IStyleProps>`
 	margin: 10px;
 	padding: 10px;
 	width: ${props => props.width || "33%"};
-	min-height: 200px;
+	height: 200px;
+	overflow-y: auto;
 	display: ${props => props.display || "block"};
 	${props => ( props.flexDirection ? `flex-direction: ${props.flexDirection}` : '')};
 `

@@ -39,6 +39,7 @@ const CountryDetail = (props) => {
     })
     const [cities, setCities] = useStateWithPromise([])
     const [languages, setLanguages] = useStateWithPromise([])
+    const [gdpData, setGdpData] = useStateWithPromise([])
 
     const populateCountryData = async () : Promise<void> => {
         const endpt = `${serviceEndpointBase}/countries/${countryCode}`
@@ -65,6 +66,17 @@ const CountryDetail = (props) => {
         }
     }
 
+    const populateGdp = async() : Promise<void> => {
+        const endpt = `${serviceEndpointBase}/countries/${countryCode}/gdp`
+        try{
+            const resp = await fetch(endpt)
+            const gdp = await resp.json()
+            await setGdpData(gdp)
+        } catch(e) {
+            console.error(`something went wrong when retrieving gdp for ${countryCode}`)
+        }
+    }
+
     useEffect(() => {
         // noinspection JSIgnoredPromiseFromCall
         populateLanguages()
@@ -72,6 +84,8 @@ const CountryDetail = (props) => {
         populateCities()
         // noinspection JSIgnoredPromiseFromCall
         populateCountryData()
+        // noinspection JSIgnoredPromiseFromCall
+        populateGdp()
     }, [])
 
     return (<BaseLayout>
@@ -107,6 +121,11 @@ const CountryDetail = (props) => {
 
             <DetailListPanel title={'Languages'}>
                 <LanguageDetails languages={languages}/>
+            </DetailListPanel>
+            <DetailListPanel title={'GDP Data'}>
+                {gdpData.map( dataPoint => <ul>
+                    <li>{dataPoint.year} : {dataPoint.value}</li>
+                </ul>)}
             </DetailListPanel>
         </FlexBottomBorderPanel>
 
