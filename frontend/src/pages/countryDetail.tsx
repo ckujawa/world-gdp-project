@@ -10,6 +10,7 @@ import { BottomBorderPanel, FlexBottomBorderPanel, DetailPanel, DetailLabel } fr
 import {ICity} from "../state/ICity";
 import CityDetails from "../components/CityDetails";
 import LanguageDetails from "../components/LanguageDetails";
+import {CartesianGrid, Legend, LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip} from "recharts";
 
 const CountryDetail = (props) => {
     const { countryCode } = useParams();
@@ -71,7 +72,8 @@ const CountryDetail = (props) => {
         try{
             const resp = await fetch(endpt)
             const gdp = await resp.json()
-            await setGdpData(gdp)
+            //make sure the data is sorted by year, ascending before setting state...
+            await setGdpData(gdp.sort((a, b) => {return parseInt(a.year) - parseInt(b.year)}))
         } catch(e) {
             console.error(`something went wrong when retrieving gdp for ${countryCode}`)
         }
@@ -123,13 +125,35 @@ const CountryDetail = (props) => {
                 <LanguageDetails languages={languages}/>
             </DetailListPanel>
             <DetailListPanel title={'GDP Data'}>
-                {gdpData.map( dataPoint => <ul>
-                    <li>{dataPoint.year} : {dataPoint.value}</li>
-                </ul>)}
+                <ResponsiveContainer>
+                    <LineChart data={gdpData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                        <Tooltip/>
+                        <XAxis dataKey="year"/>
+                        <YAxis tickFormatter={DataFormater}/>
+                        <CartesianGrid stroke="#ccc" strokeDasharray="5 5"/>
+                        <Legend/>
+                        <Line name="GDP (USD)" type="monotone" dataKey="value"/>
+                    </LineChart>
+                </ResponsiveContainer>
+
             </DetailListPanel>
         </FlexBottomBorderPanel>
 
     </BaseLayout>)
 }
+
+
+const DataFormater = (number) => {
+    if(number > 1000000000){
+        return (number/1000000000).toString() + 'B';
+    }else if(number > 1000000){
+        return (number/1000000).toString() + 'M';
+    }else if(number > 1000){
+        return (number/1000).toString() + 'K';
+    }else{
+        return number.toString();
+    }
+}
+
 
 export default CountryDetail

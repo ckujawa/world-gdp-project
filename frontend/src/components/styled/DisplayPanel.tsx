@@ -7,10 +7,11 @@ export const DisplayPanel = styled.div<IStyleProps>`
 	margin: 10px;
 	padding: 10px;
 	width: ${props => props.width || "33%"};
-	height: 200px;
+	height: 300px;
 	overflow-y: auto;
 	display: ${props => props.display || "block"};
 	${props => ( props.flexDirection ? `flex-direction: ${props.flexDirection}` : '')};
+	${props => (props.flex ? `flex: ${props.flex}` : '')};
 `
 
 export const BorderDisplayPanel = styled(DisplayPanel)`
